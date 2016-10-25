@@ -12,16 +12,17 @@ img_urls = {}
 for img in soup.find_all('img'):
     url = img.attrs.get('data-src','')
     name = url.rsplit('/',1)[-1]
-    if url:
+    if url and url.find('thumb') == -1:
         img_urls[name]=url
-        
+
 def save_obj(obj,filename):
     response = requests.get(url, stream=True)
     with open(filename, 'wb') as out_file:
         shutil.copyfileobj(obj, out_file)
     del response
+
 # print img_urls
 for name,url in img_urls.iteritems():
     response = requests.get(url, stream=True)
     print 'saving file: ',name
-    save_obj(response.raw,'results/'+name)
+    # save_obj(response.raw,'results/'+name)
