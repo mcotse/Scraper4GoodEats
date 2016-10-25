@@ -1,2 +1,4 @@
 ENV
 results
+*.pyc
+*.log
