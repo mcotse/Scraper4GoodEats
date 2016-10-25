@@ -3,6 +3,7 @@ import urllib
 import requests
 import shutil
 import time
+import signal
 from selenium import webdriver
 
 # extend_page = number of times more is clicked to
@@ -16,10 +17,14 @@ def get_all_links(link,extend_page):
     for _ in range(extend_page):
         driver.execute_script('getMore("entries")')
 
-    #wait for the page to load
-    time.sleep(20)
+    #Wait for the page to load
+    time.sleep(extend_page*2)
 
     sauce = driver.page_source
+
+    #kill the Selenium driver after being used
+    driver.service.process.send_signal(signal.SIGTERM)
+    driver.quit()
 
     # make the soup
     soup = bs.BeautifulSoup(sauce,'lxml')
@@ -31,6 +36,7 @@ def get_all_links(link,extend_page):
             continue
         if link.string and run:
             urls.append(link.attrs.get('href',''))
-            print link.string
 
     return urls
+
+print get_all_links('http://www.seriouseats.com/user/profile/Goodeaterkenji',2)
