@@ -4,6 +4,7 @@ import requests
 import shutil
 import time
 import signal
+import os
 from selenium import webdriver
 
 # extend_page = number of times more is clicked to
@@ -20,9 +21,9 @@ def get_all_links(link,extend_page,web_driver='firefox'):
     #load more entries with JS
     for _ in range(extend_page):
         driver.execute_script('getMore("entries")')
-
+        time.sleep(1)
     #Wait for the page to load
-    time.sleep(extend_page)
+
 
     sauce = driver.page_source
 
@@ -49,6 +50,9 @@ def save_obj(obj,filename):
 
 def save_images(img_urls):
     for name,url in img_urls.iteritems():
+        if os.path.exists('./results/'+name):
+            print 'file %s already exists! skipping...' % (name,)
+            continue
         response = requests.get(url, stream=True)
         print 'saving file: ',name
         save_obj(response.raw,'./results/'+name)
